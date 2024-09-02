@@ -10,7 +10,7 @@ export const useSignup = () => {
     setIsLoading(true);
     setError(null);
 
-    const baseUrl = process.env.REACT_API_URL;
+    const baseUrl = process.env.REACT_APP_API_URL;
 
     const response = await fetch(`${baseUrl}/api/user/signup`, {
       method: "POST",
