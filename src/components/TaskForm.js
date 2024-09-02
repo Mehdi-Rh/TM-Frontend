@@ -24,7 +24,9 @@ const TaskForm = ({ handleClose }) => {
     }
 
     const task = { title, description, category, dueDate, status };
-    const response = await fetch("/api/tasks", {
+
+    const baseUrl = process.env.REACT_API_URL;
+    const response = await fetch(`${baseUrl}/api/tasks`, {
       method: "POST",
       body: JSON.stringify(task),
       headers: {
