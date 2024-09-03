@@ -7,6 +7,7 @@ describe("Login and visit Home", () => {
 
     const baseUrl = "http://localhost:3000";
     cy.visit(`${baseUrl}/login`);
+    cy.get("#login-email").should("exist");
     cy.get("#login-email").click().clear().type("rahal.mehdi2@gmail.com");
     cy.get("#login-password").click().clear().type("dddD1/!qqq2");
     cy.get("#login-cta-submit").click();

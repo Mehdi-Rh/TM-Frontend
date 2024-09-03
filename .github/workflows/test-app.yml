@@ -8,17 +8,19 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-        
+
       # Install NPM dependencies, cache them correctly
       - name: Install Dependencies
         run: npm install
-        
+
       # Build the project and ignore TypeScript errors
       - name: Build project
         run: tsc --noEmit --skipLibCheck || true
-        
-       # Start the application and run Cypress tests
+
+        # Start the application and run Cypress tests
       - name: Cypress run
         uses: cypress-io/github-action@v6
+        env:
+          REACT_APP_API_URL: "https://tm-backend-16bm.onrender.com" # Set the API URL here
         with:
           start: npm start
