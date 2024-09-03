@@ -31,7 +31,7 @@ const Home = () => {
   }, [dispatch, user]);
 
   return (
-    <div className="home">
+    <div id="home">
       <div style={{ display: "flex", gap: "1rem" }}>
         <input
           type="text"
