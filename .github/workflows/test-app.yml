@@ -21,6 +21,6 @@ jobs:
       - name: Cypress run
         uses: cypress-io/github-action@v6
         env:
-          REACT_APP_API_URL: "https://tm-backend-16bm.onrender.com" # Set the API URL here
+          REACT_APP_API_URL: https://tm-backend-16bm.onrender.com # Set the API URL here
         with:
           start: npm start
