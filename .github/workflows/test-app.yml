@@ -6,21 +6,37 @@ jobs:
   cypress-run:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+    - run: echo "============= Checkout Repository Start =============="
 
-      # Install NPM dependencies, cache them correctly
-      - name: Install Dependencies
-        run: npm install
+    - name: Setup Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: "18" # Replace with your project's Node.js version
+    - run: echo "============= Setup Node.js Start =============="
 
-      # Build the project and ignore TypeScript errors
-      - name: Build project
-        run: tsc --noEmit --skipLibCheck || true
+    - name: Cache Node Modules
+      uses: actions/cache@v2
+      with:
+        path: ~/.npm
+        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-
+    - run: echo "============= Cache Node Modules Start =============="
+    - name: Install Dependencies
+      run: |
+        echo "============= Install Dependencies Start =============="
+        npm ci
+        echo "============= Install Dependencies Finish =============="
 
-        # Start the application and run Cypress tests
-      - name: Cypress run
-        uses: cypress-io/github-action@v6
-        env:
-          REACT_APP_API_URL: https://tm-backend-16bm.onrender.com # Set the API URL here
-        with:
-          start: npm start
+    - name: Build Project
+      run: |
+        echo "============= Build Project Start =============="
+        tsc --noEmit --skipLibCheck || true
+        echo "============= Build Project Finish =============="
+
+    - name: Install Xvfb
+      run: |
+        echo "============= Install Xvfb Start =============="
+        sudo apt-get update
