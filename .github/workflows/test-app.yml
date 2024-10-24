@@ -1,20 +1,28 @@
 name: Cypress Tests
 
-on: [push]
+on:
+  push:
+    branches:
+    - main
+  pull_request:
+    branches:
+    - main
 
 jobs:
   cypress-run:
     runs-on: ubuntu-latest
-    steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v2
-    - run: echo "============= Checkout Repository Start =============="
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v2
-      with:
-        node-version: "18" # Replace with your project's Node.js version
-    - run: echo "============= Setup Node.js Start =============="
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    # - name: Set up Node.js
+    #   uses: actions/setup-node@v3
+    #   with:
+    #     node-version: '18'
+
+    - name: Install dependencies
+      run: npm ci
 
     - name: Cache Node Modules
       uses: actions/cache@v2
@@ -23,20 +31,31 @@ jobs:
         key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
         restore-keys: |
           ${{ runner.os }}-node-
-    - run: echo "============= Cache Node Modules Start =============="
-    - name: Install Dependencies
-      run: |
-        echo "============= Install Dependencies Start =============="
-        npm ci
-        echo "============= Install Dependencies Finish =============="
 
-    - name: Build Project
-      run: |
-        echo "============= Build Project Start =============="
-        tsc --noEmit --skipLibCheck || true
-        echo "============= Build Project Finish =============="
+    # - name: Start frontend server
+    #   run: npm start &
+    #   env:
+    #     REACT_APP_API_URL: https://tm-backend-16bm.onrender.com # Set the API URL here
 
-    - name: Install Xvfb
-      run: |
-        echo "============= Install Xvfb Start =============="
-        sudo apt-get update
+    # - name: Wait for servers to be ready
+    #   run: sleep 15
+
+    # Start the application and run Cypress tests
+    - name: Cypress run
+      uses: cypress-io/github-action@v6
+      env:
+        REACT_APP_API_URL: https://tm-backend-16bm.onrender.com # Set the API URL here
+        REACT_APP_FRONTEND_URL: http://localhost:3000
+      with:
+        start: npm start
+
+    - name: Archive Cypress test results
+      if: always()
+      uses: actions/upload-artifact@v2
+      with:
+        name: cypress-results
+        path: cypress/results
+
+
+    container:
+      image: cypress/included
