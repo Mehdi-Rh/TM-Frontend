@@ -32,23 +32,19 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-node-
 
-    # - name: Start frontend server
-    #   run: npm start &
-    #   env:
-    #     REACT_APP_API_URL: https://tm-backend-16bm.onrender.com # Set the API URL here
+        # Start the application and wait until it's fully loaded
+    - name: Start and wait for the frontend to be ready
+      run: |
+        npm start &  # Start the app in the background
+        npx wait-on http://localhost:3000 # Wait until the frontend is fully loaded on port 3000
+      env:
+        REACT_APP_API_URL: https://tm-backend-16bm.onrender.com
 
-    # - name: Wait for servers to be ready
-    #   run: sleep 15
-
-    # Start the application and run Cypress tests
+    # Run Cypress tests
     - name: Cypress run
       uses: cypress-io/github-action@v6
-      env:
-        REACT_APP_API_URL: https://tm-backend-16bm.onrender.com # Set the API URL here
-        REACT_APP_FRONTEND_URL: http://localhost:3000
       with:
-        start: npm start
-        wait-on: http://localhost:3000
+        config: baseUrl=http://localhost:3000
 
 
     - name: Archive Cypress test results
